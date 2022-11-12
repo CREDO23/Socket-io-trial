@@ -22,10 +22,21 @@ io.on("connection", (socket) => {
   console.log(sessions);
   console.log(io.engine.clientsCount);
 
-  socket.on("message", (message, to) => {
-    console.log(message, sessions[to]);
-    socket.to(sessions[to]).emit("new message", message);
+  socket.on('join room' , (room) => {
+    socket.join(room)
+
+    console.log(io.sockets.adapter.rooms)
+  })
+
+  socket.on("message", (message, chanel) => {
+    console.log(message, chanel);
+    socket.to(chanel).emit("new message", message , socket.handshake.auth.id);
   });
+
+  socket.on('private message' , (message , to) => {
+    console.log(message , to)
+    socket.to(sessions[to]).emit("new message", message , socket.handshake.auth.id)
+  })
 
   socket.on("disconnect", () => {
     console.log("USER DISCONNECTED");

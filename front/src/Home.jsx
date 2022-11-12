@@ -12,12 +12,14 @@ function App() {
 
   const [socket, setSocket] = useState(null);
   
+  const [chanel,setChanel] = useState('')
+
   const [to,setTo] = useState('')
 
   useEffect(() => {
     if (socket) {
-      socket.on("new message", (message) => {
-        setNewMessage(message);
+      socket.on("new message", (message , id) => {
+        setNewMessage(`${message}-${id}`);
       });
     }
        
@@ -56,6 +58,26 @@ function App() {
       >
          send your name
       </button>
+      <label htmlFor="name">Your Channel</label>
+      <input
+        type="text"
+        onChange={(e) => {
+          setChanel(e.target.value);
+         
+        }}
+        name="chanel"
+      />
+      <button
+          onClick={() => {
+           
+
+            if (user) {
+               socket.emit('join room' , chanel)
+          } 
+        }}
+      >
+         send your chanel
+      </button>
       <p>
         {newMessage}
       </p>
@@ -68,20 +90,27 @@ function App() {
         }}
         name="message"
           />
-             <label htmlFor="to">Target</label>
+            <label htmlFor="message">Your target</label>
       <input
         type="text"
         onChange={(e) => {
           setTo(e.target.value);
         }}
-        name="to"
-      />
+        name="message"
+          />
       <button
         onClick={() => {
-          if(user)  socket.emit('message', message , to)
+          if(user)  socket.emit('message', message , chanel)
         }}
       >
         send your message
+      </button>
+      <button
+        onClick={() => {
+          if(user && to)  socket.emit('private message', message , to)
+        }}
+      >
+        send your private message
       </button>
       </div>
     </div>
